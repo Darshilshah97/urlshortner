@@ -1,8 +1,10 @@
 import hashlib as hl
 import redis
 from flask import Flask, request, jsonify, abort, redirect
+from flask_cors import CORS
 
 app= Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
 # url = input("Enter the URL: ")
 
 url_table = {}
@@ -55,7 +57,7 @@ def generate_short():
             url_json["key"] = hash_value
             url_json["long_url"] = url
             url_json["short_url"] = hostname + hash_value
-            error_handling(f'Short URL already exist {url_json["short_url"]}',409)
+            return error_handling(f'Short URL already exist {url_json["short_url"]}',409)
         
         else:
             url_json["key"] = hash_value
