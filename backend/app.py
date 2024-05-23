@@ -77,6 +77,7 @@ def redirect_page(url_code):
     result = r.get(url_code)
 
     if(result is not None):
+        print(result)
         return redirect(result)
 
     else:

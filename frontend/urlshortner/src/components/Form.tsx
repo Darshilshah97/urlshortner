@@ -1,22 +1,43 @@
-import { ReactEventHandler, useRef, useState } from "react"
+import { useState } from "react"
 import APIClient from "../services/apiClient"
 
 const Form = () => {
 
     const apiClient = new APIClient()
 
-    
-
     const [longUrl, setlongUrl] = useState("");
+    const [error, setError] = useState("");
+    const [resultURL, setURL] = useState("");
+    const [result,setResult] = useState(false);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setlongUrl(e.target.value);
     }
   return (
-    <form onSubmit={(event) => {
+    <form onSubmit={async (event) => {
         event.preventDefault();
 
-        apiClient.generate(longUrl)
+        if(longUrl === ""){
+            setError("Please enter URL.")
+        }else{
+            setError("")
+            const resp = await apiClient.generate(longUrl)
+            console.log(resp);
+
+            if(resp.success){
+              const short_code = resp.data;
+              setResult(true);
+              setURL(short_code.short_url);
+              setError("")
+            }else{
+              setError(resp.error)
+              setResult(false)
+              setURL("")
+            }
+    
+        }
+
+        
     }}>
       <label htmlFor="long_url" className="block py-2 text-sm font-medium leading-6 text-gray-900">
         Enter URL
@@ -35,6 +56,15 @@ const Form = () => {
         >
           Generate short url
         </button>
+        {
+            error && longUrl === "" && <p>No URL was entered</p>
+        }
+        {
+          error
+        }
+        {
+          result && <p>{resultURL}</p>
+        }
     </form>
   )
 }
