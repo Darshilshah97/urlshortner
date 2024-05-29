@@ -12,9 +12,11 @@ const Form = () => {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setlongUrl(e.target.value);
+        setError("")
     }
   return (
-    <form onSubmit={async (event) => {
+    <>
+      <form onSubmit={async (event) => {
         event.preventDefault();
 
         if(longUrl === ""){
@@ -56,16 +58,21 @@ const Form = () => {
         >
           Generate short url
         </button>
+    </form>
         {
             error && longUrl === "" && <p>No URL was entered</p>
         }
-        {
-          error
+        { error &&
+          <div className="p-4 mb-4 text-sm text-red-800 rounded-lg dark:text-red-400" role="alert">
+             {error}
+          </div>
+            
         }
         {
-          result && <p>{resultURL}</p>
+          result && <p className="pt-6"> <span className="font-semibold text-black-900">Shortened URL:</span> {resultURL}</p>
         }
-    </form>
+    </>
+    
   )
 }
 

@@ -20,7 +20,17 @@ import axios, { AxiosResponse } from "axios";
     error: string; 
  }
 
+ interface deleteSuccess {
+    message: string;
+ }
+
+ interface FetchResponseDeleteSucess {
+    success: true;
+    data: deleteSuccess;
+ }
+
  type FetchResponse =  FetchResponseSuccess | FetchResponseError;
+ type FetchDeleteResponse = FetchResponseDeleteSucess | FetchResponseError;
 
 class APIClient {
 
@@ -59,6 +69,21 @@ class APIClient {
         .catch(err => {
             console.log(err.error)
         })
+    }
+
+    deleteURL = async <T>(longUrl:string): Promise<FetchDeleteResponse> => {
+      try {
+
+        const short_code = longUrl.substring(longUrl.lastIndexOf('/')+1)
+
+        const response: AxiosResponse<T> = await axiosInstance.delete('/delete/' + short_code);
+        return { success: true, data: response.data } as FetchResponseDeleteSucess;
+      } catch (error: any) {
+        return {
+          success: false,
+          error: error.response ? error.response.data.error : 'Network Error',
+        } as FetchResponseError;
+      } 
     }
 }
 
